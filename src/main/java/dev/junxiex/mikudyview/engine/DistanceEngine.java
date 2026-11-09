@@ -9,6 +9,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -37,14 +38,14 @@ public final class DistanceEngine {
     private final PlayerIndex players = new PlayerIndex();
     private final HistoryRing history = new HistoryRing(20);
 
-    private final Map<String, WorldState> states = new HashMap<>();
-    private final Map<String, Integer> worldCounters = new HashMap<>();
+    private final Map<String, WorldState> states = new ConcurrentHashMap<>();
+    private final Map<String, Integer> worldCounters = new ConcurrentHashMap<>();
     private final Deque<double[]> predictionSamples = new ArrayDeque<>();
     private final Map<UUID, Integer> appliedView = new ConcurrentHashMap<>();
     private final Map<String, Integer> clientMaxView = new ConcurrentHashMap<>();
 
     private volatile Settings settings;
-    private Snapshot snapshot;
+    private volatile Snapshot snapshot;
     private ScheduledTask task;
     private long tickCounter;
     private long startTick;
@@ -533,7 +534,10 @@ public final class DistanceEngine {
 
     public List<PlanRow> simulate(String worldFilter) {
         Settings current = settings;
-        Snapshot snapshotNow = snapshot != null ? snapshot : takeSnapshot(current);
+        Snapshot snapshotNow = snapshot;
+        if (snapshotNow == null) {
+            return List.of();
+        }
         List<PlanRow> rows = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) {
             if (worldFilter != null && !world.getName().equalsIgnoreCase(worldFilter)) {

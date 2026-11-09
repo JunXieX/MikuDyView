@@ -161,25 +161,32 @@ public final class MvdCommand {
                 : Bukkit.getWorlds().stream()
                         .filter(candidate -> !engine.settings().world(candidate.getName()).exclude())
                         .toList();
-        for (World target : targets) {
-            engine.setManual(target, type, value);
-            sender.sendMessage(plugin.messages().get("set.ok",
-                    "world", target.getName(), "type", type, "value", String.valueOf(value)));
-        }
+        // Folia：玩家命令跑在自己的区域线程上，改世界距离必须交回全局区域线程。
+        Bukkit.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            for (World target : targets) {
+                engine.setManual(target, type, value);
+                sender.sendMessage(plugin.messages().get("set.ok",
+                        "world", target.getName(), "type", type, "value", String.valueOf(value)));
+            }
+        });
         return 1;
     }
 
     private int reload(CommandSourceStack source) {
         CommandSender sender = source.getSender();
-        plugin.reloadAll();
-        sender.sendMessage(plugin.messages().get("reload.ok"));
+        Bukkit.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            plugin.reloadAll();
+            sender.sendMessage(plugin.messages().get("reload.ok"));
+        });
         return 1;
     }
 
     private int toggle(CommandSourceStack source, boolean enabled) {
         CommandSender sender = source.getSender();
-        plugin.setPluginEnabled(enabled);
-        sender.sendMessage(plugin.messages().get(enabled ? "toggle.on" : "toggle.off"));
+        Bukkit.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            plugin.setPluginEnabled(enabled);
+            sender.sendMessage(plugin.messages().get(enabled ? "toggle.on" : "toggle.off"));
+        });
         return 1;
     }
 }

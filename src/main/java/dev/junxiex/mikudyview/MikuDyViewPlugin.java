@@ -40,7 +40,7 @@ public final class MikuDyViewPlugin extends JavaPlugin {
         registerPermissions();
 
         this.engine = new DistanceEngine(this, settings, messages);
-        getServer().getPluginManager().registerEvents(new PlayerListener(engine), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(this, engine), this);
 
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
                 event.registrar().register(new MvdCommand(this, engine).build(),
