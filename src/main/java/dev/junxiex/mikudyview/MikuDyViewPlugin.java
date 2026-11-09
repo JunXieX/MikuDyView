@@ -32,6 +32,15 @@ public final class MikuDyViewPlugin extends JavaPlugin {
     private DistanceEngine engine;
 
     @Override
+    public void onLoad() {
+        // Folia 上 COMMANDS 生命周期事件在 onEnable 之前触发，注册必须提前到这里。
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            event.registrar().register(new MvdCommand(this).build(), "MikuDyView 主命令", List.of("mikudyview"));
+            getLogger().info("已注册命令 /mvd。");
+        });
+    }
+
+    @Override
     public void onEnable() {
         saveDefaultConfig();
         this.messages = Messages.load(this);
@@ -41,10 +50,6 @@ public final class MikuDyViewPlugin extends JavaPlugin {
 
         this.engine = new DistanceEngine(this, settings, messages);
         getServer().getPluginManager().registerEvents(new PlayerListener(this, engine), this);
-
-        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
-                event.registrar().register(new MvdCommand(this, engine).build(),
-                        "MikuDyView 主命令", List.of("mikudyview")));
 
         engine.start();
         getLogger().info("MikuDyView " + getPluginMeta().getVersion()
@@ -76,6 +81,10 @@ public final class MikuDyViewPlugin extends JavaPlugin {
 
     public Messages messages() {
         return messages;
+    }
+
+    public DistanceEngine engine() {
+        return engine;
     }
 
     public Settings settings() {

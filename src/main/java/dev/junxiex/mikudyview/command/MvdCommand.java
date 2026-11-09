@@ -5,8 +5,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import dev.junxiex.mikudyview.MikuDyViewPlugin;
 import dev.junxiex.mikudyview.config.Settings;
-import dev.junxiex.mikudyview.engine.DistanceEngine;
-import dev.junxiex.mikudyview.engine.HistoryRing;
+import dev.junxiex.mikudyview.engine().DistanceEngine;
+import dev.junxiex.mikudyview.engine().HistoryRing;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
@@ -26,11 +26,14 @@ public final class MvdCommand {
             .withZone(ZoneId.systemDefault());
 
     private final MikuDyViewPlugin plugin;
-    private final DistanceEngine engine;
 
-    public MvdCommand(MikuDyViewPlugin plugin, DistanceEngine engine) {
+    public MvdCommand(MikuDyViewPlugin plugin) {
         this.plugin = plugin;
-        this.engine = engine;
+    }
+
+    /** 命令可能在 onLoad 阶段就注册，执行时引擎一定已经装配好。 */
+    private DistanceEngine engine() {
+        return plugin.engine();
     }
 
     public LiteralCommandNode<CommandSourceStack> build() {
@@ -79,12 +82,12 @@ public final class MvdCommand {
 
     private int status(CommandSourceStack source) {
         CommandSender sender = source.getSender();
-        Settings settings = engine.settings();
+        Settings settings = engine().settings();
         sender.sendMessage(plugin.messages().get("status.header"));
         sender.sendMessage(plugin.messages().get("status.summary",
                 "mode", settings.mode(),
-                "mspt", String.format(Locale.ROOT, "%.2f", engine.currentMspt()),
-                "mem", String.format(Locale.ROOT, "%.1f", engine.freeMemoryPercent()),
+                "mspt", String.format(Locale.ROOT, "%.2f", engine().currentMspt()),
+                "mem", String.format(Locale.ROOT, "%.1f", engine().freeMemoryPercent()),
                 "enabled", String.valueOf(settings.enabled())));
 
         for (World world : Bukkit.getWorlds()) {
@@ -93,18 +96,18 @@ public final class MvdCommand {
             if (settings.world(worldName).exclude()) {
                 flags.append(plugin.messages().raw("status.flags.excluded"));
             }
-            if (engine.isContested(worldName)) {
+            if (engine().isContested(worldName)) {
                 flags.append(plugin.messages().raw("status.flags.contested"));
             }
-            if (engine.hasOverride(worldName)) {
+            if (engine().hasOverride(worldName)) {
                 flags.append(plugin.messages().raw("status.flags.override"));
             }
             sender.sendMessage(plugin.messages().get("status.world",
                     "world", worldName,
                     "sim", String.valueOf(world.getSimulationDistance()),
                     "view", String.valueOf(world.getViewDistance()),
-                    "players", String.valueOf(engine.players().counts().getOrDefault(worldName, 0)),
-                    "next", String.valueOf(engine.nextCheckIn(worldName) / 20),
+                    "players", String.valueOf(engine().players().counts().getOrDefault(worldName, 0)),
+                    "next", String.valueOf(engine().nextCheckIn(worldName) / 20),
                     "flags", flags.toString()));
         }
         return 1;
@@ -112,7 +115,7 @@ public final class MvdCommand {
 
     private int history(CommandSourceStack source, int count) {
         CommandSender sender = source.getSender();
-        List<HistoryRing.Entry> entries = engine.history().recent(count);
+        List<HistoryRing.Entry> entries = engine().history().recent(count);
         if (entries.isEmpty()) {
             sender.sendMessage(plugin.messages().get("history.empty"));
             return 1;
@@ -133,7 +136,7 @@ public final class MvdCommand {
 
     private int simulate(CommandSourceStack source, World world) {
         CommandSender sender = source.getSender();
-        List<DistanceEngine.PlanRow> rows = engine.simulate(world == null ? null : world.getName());
+        List<DistanceEngine.PlanRow> rows = engine().simulate(world == null ? null : world.getName());
         if (rows.isEmpty()) {
             sender.sendMessage(plugin.messages().get("simulate.empty"));
             return 1;
@@ -159,12 +162,12 @@ public final class MvdCommand {
         List<World> targets = world != null
                 ? List.of(world)
                 : Bukkit.getWorlds().stream()
-                        .filter(candidate -> !engine.settings().world(candidate.getName()).exclude())
+                        .filter(candidate -> !engine().settings().world(candidate.getName()).exclude())
                         .toList();
         // Folia：玩家命令跑在自己的区域线程上，改世界距离必须交回全局区域线程。
         Bukkit.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
             for (World target : targets) {
-                engine.setManual(target, type, value);
+                engine().setManual(target, type, value);
                 sender.sendMessage(plugin.messages().get("set.ok",
                         "world", target.getName(), "type", type, "value", String.valueOf(value)));
             }
