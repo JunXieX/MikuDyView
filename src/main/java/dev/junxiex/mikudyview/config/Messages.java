@@ -50,9 +50,11 @@ public final class Messages {
     }
 
     public static Messages load(JavaPlugin plugin) {
-        plugin.saveResource("messages.yml", false);
         Map<String, String> values = new LinkedHashMap<>(DEFAULTS);
         File file = new File(plugin.getDataFolder(), "messages.yml");
+        if (!file.isFile()) {
+            plugin.saveResource("messages.yml", false);
+        }
         if (file.isFile()) {
             YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
             for (String key : yaml.getKeys(true)) {

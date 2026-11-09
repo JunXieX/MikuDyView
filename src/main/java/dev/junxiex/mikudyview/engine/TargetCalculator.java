@@ -48,7 +48,7 @@ public final class TargetCalculator {
         int sim = Math.min(budgetSim, msptSim);
         int view = Math.min(budgetView, msptView);
 
-        if (sim == budgetSim || view == budgetView) {
+        if (players > 0 && (sim == budgetSim || view == budgetView)) {
             reasons.add(Target.Reason.BUDGET);
         }
         if (snapshot.mspt() >= settings.decreaseMspt() || snapshot.mspt() <= settings.increaseMspt()) {
