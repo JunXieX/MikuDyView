@@ -110,7 +110,8 @@ public final class MvdCommand {
         return 1;
     }
 
-    private int history(CommandSender sender, int count) {
+    private int history(CommandSourceStack source, int count) {
+        CommandSender sender = source.getSender();
         List<HistoryRing.Entry> entries = engine.history().recent(count);
         if (entries.isEmpty()) {
             sender.sendMessage(plugin.messages().get("history.empty"));
@@ -130,7 +131,8 @@ public final class MvdCommand {
         return 1;
     }
 
-    private int simulate(CommandSender sender, World world) {
+    private int simulate(CommandSourceStack source, World world) {
+        CommandSender sender = source.getSender();
         List<DistanceEngine.PlanRow> rows = engine.simulate(world == null ? null : world.getName());
         if (rows.isEmpty()) {
             sender.sendMessage(plugin.messages().get("simulate.empty"));
@@ -162,13 +164,15 @@ public final class MvdCommand {
         return 1;
     }
 
-    private int reload(CommandSender sender) {
+    private int reload(CommandSourceStack source) {
+        CommandSender sender = source.getSender();
         plugin.reloadAll();
         sender.sendMessage(plugin.messages().get("reload.ok"));
         return 1;
     }
 
-    private int toggle(CommandSender sender, boolean enabled) {
+    private int toggle(CommandSourceStack source, boolean enabled) {
+        CommandSender sender = source.getSender();
         plugin.setPluginEnabled(enabled);
         sender.sendMessage(plugin.messages().get(enabled ? "toggle.on" : "toggle.off"));
         return 1;
