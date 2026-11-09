@@ -60,6 +60,9 @@ public final class DistanceEngine {
     }
 
     public void start() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            players.put(player.getUniqueId(), player.getWorld().getName());
+        }
         task = Bukkit.getServer().getGlobalRegionScheduler()
                 .runAtFixedRate(plugin, scheduled -> tick(), 1L, 1L);
     }
@@ -82,7 +85,6 @@ public final class DistanceEngine {
             state.resetStreaks();
             state.pendingRevert = null;
         });
-        this.startTick = tickCounter;
         this.globalCounter = Math.max(newSettings.checkInterval() - 1, 0);
         this.snapshot = null;
     }

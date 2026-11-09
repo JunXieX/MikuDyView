@@ -156,7 +156,11 @@ public final class MvdCommand {
     private int set(CommandContext<CommandSourceStack> context, String type, World world) {
         CommandSender sender = context.getSource().getSender();
         int value = IntegerArgumentType.getInteger(context, "value");
-        List<World> targets = world != null ? List.of(world) : Bukkit.getWorlds();
+        List<World> targets = world != null
+                ? List.of(world)
+                : Bukkit.getWorlds().stream()
+                        .filter(candidate -> !engine.settings().world(candidate.getName()).exclude())
+                        .toList();
         for (World target : targets) {
             engine.setManual(target, type, value);
             sender.sendMessage(plugin.messages().get("set.ok",
