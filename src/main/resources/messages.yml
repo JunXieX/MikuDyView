@@ -1,34 +1,39 @@
-# MikuDyView 消息。颜色用 & 代码。
-prefix: "&8[&bMikuDyView&8] "
+# MikuDyView 消息，使用 MiniMessage。占位符一律小写，例如 <world>。
+status:
+  header: "<aqua>===== MikuDyView ====="
+  summary: "<gray>模式 <white><mode></white> | MSPT <white><mspt></white> | 空闲堆 <white><mem>%</white> | 开关 <white><enabled>"
+  world: "<yellow><world></yellow> <gray>sim <white><sim></white> view <white><view></white> | 玩家 <white><players></white> | 下次 <white><next>s<flags>"
+  flags:
+    excluded: " (excluded)"
+    contested: " (contested)"
+    override: " (override)"
+  none: "<gray>没有正在管理的世界。"
 
-status-header: "&b===== MikuDyView ====="
-status-summary: "&7模式 &f{mode} &7| MSPT &f{mspt} &7| 空闲堆 &f{mem}% &7| 开关 &f{enabled}"
-status-world: "&e{world} &7sim &f{sim} &7view &f{view} &7| 玩家 &f{players} &7| 下次 &f{next}s{flags}"
-status-world-excluded: " &8(excluded)"
-status-world-contested: " &c(contested)"
-status-world-override: " &d(override)"
-status-fixed: "&7固定视距玩家：&f{count}"
-status-none: "&7没有正在管理的世界。"
+history:
+  header: "<aqua>===== 最近 <count> 条变更 ====="
+  entry: "<gray><time> <yellow><world></yellow> <gray>sim <white><oldsim></white>-><white><newsim></white> view <white><oldview></white>-><white><newview>"
+  reason: "  <dark_gray>原因：<reason>"
+  empty: "<gray>暂无变更记录。"
 
-history-header: "&b===== 最近 {count} 条变更 ====="
-history-entry: "&7{time} &e{world} &7sim &f{oldSim}&7->&f{newSim} &7view &f{oldView}&7->&f{newView}"
-history-empty: "&7暂无变更记录。"
-history-reason: "  &8原因：{reason}"
+simulate:
+  header: "<aqua>===== 预演：<world> ====="
+  entry: "<yellow><world></yellow> <gray>当前 <white><sim>/<view></white> -> 目标 <white><targetsim>/<targetview></white> <gray>[<verdict><gray>]"
+  reason: "  <dark_gray>原因：<reason>"
+  empty: "<gray>没有可预演的世界。"
 
-simulate-header: "&b===== 预演：{world} ====="
-simulate-entry: "&e{world} &7当前 &f{sim}/{view} &7-> 目标 &f{targetSim}/{targetView} &7[{verdict}]"
-simulate-reason: "  &8原因：{reason}"
-simulate-empty: "&7没有可预演的世界。"
+set:
+  ok: "<green>已设置 <white><world></white> 的 <white><type></white> 为 <white><value></white>（保持到下次 reload）。"
+  invalid: "<red>距离必须在 2-32 之间。"
 
-set-ok: "&a已把 {world} 的 {type} 设为 &f{value}&a。"
-set-override: "&a已把 {world} 的 {type} 设为 &f{value}&a，将在下次 reload 前保持。"
-set-invalid: "&c距离必须在 2-32 之间。"
-world-not-found: "&c找不到世界：{world}"
+world:
+  not-found: "<red>找不到世界：<world>"
 
-reloaded: "&a配置已重新加载。"
-enabled: "&a自动调节已开启（已写入配置文件）。"
-disabled: "&e自动调节已关闭（已写入配置文件）。"
-no-permission: "&c你没有权限。"
-player-only: "&c该命令只能由玩家执行。"
+reload:
+  ok: "<green>配置已重新加载。"
 
-# 优先级说明：正数越大越优先（此处仅占位，实际由权限节点决定）
+toggle:
+  on: "<green>自动调节已开启（已写入配置文件）。"
+  off: "<yellow>自动调节已关闭（已写入配置文件）。"
+
+no-permission: "<red>你没有权限。"
+player-only: "<red>该命令只能由玩家执行。"

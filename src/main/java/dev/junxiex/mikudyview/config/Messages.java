@@ -19,16 +19,16 @@ public final class Messages {
         DEFAULTS.put("status.header", "<aqua>===== MikuDyView =====");
         DEFAULTS.put("status.summary", "<gray>模式 <white><mode></white> | MSPT <white><mspt></white> | 空闲堆 <white><mem>%</white> | 开关 <white><enabled>");
         DEFAULTS.put("status.world", "<yellow><world></yellow> <gray>sim <white><sim></white> view <white><view></white> | 玩家 <white><players></white> | 下次 <white><next>s<flags>");
-        DEFAULTS.put("status.flags.excluded", " <dark_gray>(excluded)");
-        DEFAULTS.put("status.flags.contested", " <red>(contested)");
-        DEFAULTS.put("status.flags.override", " <light_purple>(override)");
+        DEFAULTS.put("status.flags.excluded", " (excluded)");
+        DEFAULTS.put("status.flags.contested", " (contested)");
+        DEFAULTS.put("status.flags.override", " (override)");
         DEFAULTS.put("status.none", "<gray>没有正在管理的世界。");
         DEFAULTS.put("history.header", "<aqua>===== 最近 <count> 条变更 =====");
-        DEFAULTS.put("history.entry", "<gray><time> <yellow><world></yellow> <gray>sim <white><oldSim></white>-><white><newSim></white> view <white><oldView></white>-><white><newView>");
+        DEFAULTS.put("history.entry", "<gray><time> <yellow><world></yellow> <gray>sim <white><oldsim></white>-><white><newsim></white> view <white><oldview></white>-><white><newview>");
         DEFAULTS.put("history.reason", "  <dark_gray>原因：<reason>");
         DEFAULTS.put("history.empty", "<gray>暂无变更记录。");
         DEFAULTS.put("simulate.header", "<aqua>===== 预演：<world> =====");
-        DEFAULTS.put("simulate.entry", "<yellow><world></yellow> <gray>当前 <white><sim>/<view></white> -> 目标 <white><targetSim>/<targetView></white> <gray>[<verdict><gray>]");
+        DEFAULTS.put("simulate.entry", "<yellow><world></yellow> <gray>当前 <white><sim>/<view></white> -> 目标 <white><targetsim>/<targetview></white> <gray>[<verdict><gray>]");
         DEFAULTS.put("simulate.reason", "  <dark_gray>原因：<reason>");
         DEFAULTS.put("simulate.empty", "<gray>没有可预演的世界。");
         DEFAULTS.put("set.ok", "<green>已设置 <white><world></white> 的 <white><type></white> 为 <white><value></white>（保持到下次 reload）。");
@@ -75,9 +75,15 @@ public final class Messages {
         }
         TagResolver.Builder builder = TagResolver.builder();
         for (int i = 0; i + 1 < placeholders.length; i += 2) {
-            builder.resolver(Placeholder.unparsed(placeholders[i], placeholders[i + 1]));
+            String name = placeholders[i].toLowerCase(java.util.Locale.ROOT);
+            builder.resolver(Placeholder.unparsed(name, placeholders[i + 1]));
         }
-        return mini.deserialize(raw, builder.build());
+        try {
+            return mini.deserialize(raw, builder.build());
+        } catch (RuntimeException exception) {
+            // 模板写错（例如大写占位符）不应该让整条命令失败。
+            return Component.text(raw);
+        }
     }
 
     public String raw(String key) {

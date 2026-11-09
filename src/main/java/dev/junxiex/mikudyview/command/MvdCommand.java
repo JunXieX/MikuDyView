@@ -122,10 +122,10 @@ public final class MvdCommand {
             sender.sendMessage(plugin.messages().get("history.entry",
                     "time", TIME.format(Instant.ofEpochMilli(entry.time())),
                     "world", entry.world(),
-                    "oldSim", String.valueOf(entry.oldSim()),
-                    "newSim", String.valueOf(entry.newSim()),
-                    "oldView", String.valueOf(entry.oldView()),
-                    "newView", String.valueOf(entry.newView())));
+                    "oldsim", String.valueOf(entry.oldSim()),
+                    "newsim", String.valueOf(entry.newSim()),
+                    "oldview", String.valueOf(entry.oldView()),
+                    "newview", String.valueOf(entry.newView())));
             sender.sendMessage(plugin.messages().get("history.reason", "reason", entry.reason()));
         }
         return 1;
@@ -138,14 +138,15 @@ public final class MvdCommand {
             sender.sendMessage(plugin.messages().get("simulate.empty"));
             return 1;
         }
+        sender.sendMessage(plugin.messages().get("simulate.header",
+                "world", world == null ? "全部世界" : world.getName()));
         for (DistanceEngine.PlanRow row : rows) {
-            sender.sendMessage(plugin.messages().get("simulate.header", "world", row.world()));
             sender.sendMessage(plugin.messages().get("simulate.entry",
                     "world", row.world(),
                     "sim", String.valueOf(row.currentSim()),
                     "view", String.valueOf(row.currentView()),
-                    "targetSim", String.valueOf(row.targetSim()),
-                    "targetView", String.valueOf(row.targetView()),
+                    "targetsim", String.valueOf(row.targetSim()),
+                    "targetview", String.valueOf(row.targetView()),
                     "verdict", row.wouldApply() ? "本轮可执行" : "等待确认"));
             sender.sendMessage(plugin.messages().get("simulate.reason", "reason", row.reason()));
         }
