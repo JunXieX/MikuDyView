@@ -74,7 +74,7 @@ public final class SettingsLoader {
                     continue;
                 }
                 int minSim = clampInt(ws.getInt("simulation.min", 4), 2, 32);
-                int maxSim = clampInt(ws.getInt("simulation.max", 8), minSim, 32);
+                int maxSim = clampInt(ws.getInt("simulation.max", 12), minSim, 32);
                 int minView = clampInt(ws.getInt("view.min", 4), 2, 32);
                 int maxView = clampInt(ws.getInt("view.max", 12), Math.max(minView, minSim), 32);
                 double weight = clampDouble(ws.getDouble("weight", 1.0D), 0.0D, 10.0D);

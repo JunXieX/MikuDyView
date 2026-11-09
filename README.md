@@ -32,7 +32,7 @@
 1. 把 `MikuDyView-1.0.0.jar` 放进 `plugins/`。
 2. 重启服务器。
 3. 首次启动会在 `plugins/MikuDyView/` 生成两个文件：
-   - `config.yml`：所有可调参数，默认视距 4–12、模拟距离 4–8。
+   - `config.yml`：所有可调参数，默认视距 4–12、模拟距离 4–12。
    - `messages.yml`：命令回显文本，颜色用 MiniMessage 标签。
 
 默认配置开箱即用：`enabled: true`、`mode: mixed`，开服 2 分钟后开始调节。
@@ -66,7 +66,7 @@ world-settings:
     exclude: false
     simulation:
       min: 4
-      max: 8
+      max: 12
     view:
       min: 4
       max: 12

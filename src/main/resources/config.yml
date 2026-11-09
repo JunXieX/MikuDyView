@@ -75,7 +75,7 @@ world-settings:
     exclude: false
     simulation:
       min: 4
-      max: 8
+      max: 12
     view:
       min: 4
       max: 12

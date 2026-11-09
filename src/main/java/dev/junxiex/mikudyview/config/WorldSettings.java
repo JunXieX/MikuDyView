@@ -12,7 +12,7 @@ public record WorldSettings(
 ) {
 
     public static WorldSettings defaults() {
-        return new WorldSettings(false, 4, 8, 4, 12, 1.0D, 0);
+        return new WorldSettings(false, 4, 12, 4, 12, 1.0D, 0);
     }
 
     /** 该世界自己的检查间隔；未配置时跟随全局。 */
