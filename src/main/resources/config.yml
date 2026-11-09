@@ -1,0 +1,85 @@
+# MikuDyView 配置
+# 距离单位是区块；有效范围 2-32，且 view >= simulation。
+
+# 总开关。关掉后不再自动修改任何世界的距离（手动命令仍然可用）。
+enabled: true
+
+# 调节模式：
+#   mixed - 预算与 MSPT 同时生效，取两者中更保守的目标（推荐）
+#   off   - 完全不自动调节
+mode: mixed
+
+# 每多少 tick 做一次全局快照（MSPT、内存、玩家分布）。
+check-interval: 200
+
+# 启动后等待多少 tick 才开始调节，避开开服期的抖动。
+start-delay: 2400
+
+# MSPT 阈值：低于 increase 考虑升，高于 decrease 考虑降；两者之间保持不动。
+increase-mspt: 40.0
+decrease-mspt: 47.0
+
+# 单次调节的最大步长（格）。升慢降快是刻意设计：升视距要给每个玩家补发外圈区块。
+max-increase-step: 2
+max-decrease-step: 4
+
+# 连续多少次检查都指向同一方向，才真正执行。
+# 10 秒一次检查时，4 次约等于 40 秒。
+checks-to-increase: 4
+checks-to-decrease: 1
+
+# 两次"升"之间至少间隔多少 tick，避免刚升完又升。
+min-increase-interval: 200
+
+# 刚升过就被判定过载时，直接回滚到升之前的值，而不是等降的确认计数。
+revert-on-overload: true
+
+# 用最近的（区块数, MSPT）样本做线性回归，预测升一格是否会把 MSPT 推过阈值。
+prediction:
+  enabled: true
+  min-samples: 5
+
+# 空闲堆低于阈值时禁止一切上调；下调不受影响。
+memory-safeguard:
+  enabled: true
+  min-free-percent: 15.0
+
+# 把视距压到该世界客户端实际能渲染的最大值（+headroom）。
+client-view-cap:
+  enabled: false
+  headroom: 1
+
+# 按权限给单个玩家固定视距：mikudyview.fixed.<2-32>，取最大值。
+per-player-fixed-view:
+  enabled: false
+  permission-prefix: mikudyview.fixed.
+
+# 挂机玩家降视距（Paper 的 idle 计时）。
+afk-throttle:
+  enabled: false
+  minutes: 5
+  view-distance: 6
+
+# 全局区块预算。默认值对应 20 人、模拟距离 8 / 视距 12 的规模。
+budget:
+  ticking: 5780
+  non-ticking: 6720
+
+# 是否在控制台打印每次距离变更。
+log-changes: true
+
+# 每个世界的设置。未列出的世界使用 default。
+world-settings:
+  default:
+    # 完全不管理这个世界（仍会参与其它世界的权重计算，除非 weight 为 0）。
+    exclude: false
+    simulation:
+      min: 4
+      max: 8
+    view:
+      min: 4
+      max: 12
+    # 相对权重：末地可以设 0.5，主世界设 1.5。
+    weight: 1.0
+    # 该世界自己的检查间隔，0 表示跟随 check-interval。
+    ticks-per-check: 0

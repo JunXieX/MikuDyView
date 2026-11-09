@@ -1,0 +1,8 @@
+name: MikuDyView
+version: '${version}'
+main: dev.junxiex.mikudyview.MikuDyViewPlugin
+api-version: '26.3'
+description: 按世界动态调节视距与模拟距离，Paper / Folia 双端。
+authors: [JunXieX]
+website: https://github.com/JunXieX/MikuDyView
+folia-supported: true
